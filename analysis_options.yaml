@@ -1,0 +1,20 @@
+
+analyzer: 
+  exclude: 
+    - "**/*.g.dart"
+
+linter:
+  rules:
+    avoid_web_libraries_in_flutter: false
+    prefer_relative_imports: true
+    prefer_single_quotes: true
+    unnecessary_await_in_return: true
+    prefer_final_fields: true
+    prefer_final_locals: true
+    avoid_unused_constructor_parameters: true
+    always_declare_return_types: true
+    require_trailing_commas: true
+    constant_identifier_names: false
+    depend_on_referenced_packages: false
+    use_build_context_synchronously: false
+    collection_methods_unrelated_type: false
