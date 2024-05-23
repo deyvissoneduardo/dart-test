@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cuidapet_api/application/exceptions/user_notfound_exception.dart';
 import 'package:cuidapet_api/application/logger/i_logger.dart';
 import 'package:cuidapet_api/entities/user.dart';
 import 'package:cuidapet_api/modules/user/data/user_repository.dart';
@@ -52,5 +53,17 @@ void main() {
       expect(user, isA<User>());
       expect(user, userExpected);
     });
+  });
+
+  test('Should return exception UserNotFoundException', () async {
+    final userId = 1;
+
+    final mockResults = MockResults();
+
+    database.mockQuery(mockResults, [userId]);
+
+    final call = userRepository.findById;
+
+    expect(() => call(userId), throwsA(isA<UserNotfoundException>()));
   });
 }
