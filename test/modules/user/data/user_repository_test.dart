@@ -52,6 +52,7 @@ void main() {
 
       expect(user, isA<User>());
       expect(user, userExpected);
+      database.verifyConnectionClose();
     });
   });
 
@@ -65,5 +66,7 @@ void main() {
     final call = userRepository.findById;
 
     expect(() => call(userId), throwsA(isA<UserNotfoundException>()));
+    await Future.delayed(Duration(seconds: 1));
+    database.verifyConnectionClose();
   });
 }

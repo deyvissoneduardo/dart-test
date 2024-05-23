@@ -15,4 +15,8 @@ class MockDatabaseConnection extends Mock implements IDatabaseConnection {
     when(() => mysqlConnection.query(any(), params ?? any()))
         .thenAnswer((_) async => mockResults);
   }
+
+  void verifyConnectionClose() {
+    verify(() => mysqlConnection.close()).called(1);
+  }
 }
