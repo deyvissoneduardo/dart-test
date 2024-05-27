@@ -33,24 +33,22 @@ void main() {
 
       final userInsert = User(
         email: 'eduardo@gmail.com',
-        registerType: 'App',
+        registerType: 'APP',
         imageAvatar: '',
         password: '123123',
       );
 
-      final userExpect = (
-        User(
-          id: userId,
-          email: 'eduardo@gmail.com',
-          registerType: 'App',
-          imageAvatar: '',
-          password: '',
-        ),
+      final userExpected = User(
+        id: userId,
+        email: 'eduardo@gmail.com',
+        registerType: 'APP',
+        imageAvatar: '',
+        password: '',
       );
 
       final user = await userRepository.createUser(userInsert);
 
-      expect(user, userExpect);
+      expect(user, userExpected);
     });
   });
 
