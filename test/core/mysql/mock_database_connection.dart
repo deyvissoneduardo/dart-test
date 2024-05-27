@@ -1,8 +1,7 @@
 import 'package:cuidapet_api/application/database/i_database_connection.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'mock_mysql_connection.dart';
-import 'mock_result.dart';
+import '_mysql_mocks.dart';
 
 class MockDatabaseConnection extends Mock implements IDatabaseConnection {
   final mysqlConnection = MockMysqlConnection();
@@ -14,6 +13,21 @@ class MockDatabaseConnection extends Mock implements IDatabaseConnection {
   void mockQuery(MockResults mockResults, [List<Object>? params]) {
     when(() => mysqlConnection.query(any(), params ?? any()))
         .thenAnswer((_) async => mockResults);
+  }
+
+  void mockQueryException([
+    MockMysqlException? mockMysqlException,
+    List<Object>? params,
+  ]) {
+    var exception = mockMysqlException;
+
+    if (exception == null) {
+      exception = MockMysqlException();
+      when(() => exception!.message).thenReturn('Erro mysql generico');
+    }
+
+    when(() => mysqlConnection.query(any(), params ?? any()))
+        .thenThrow(exception);
   }
 
   void verifyConnectionClose() {

@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cuidapet_api/application/exceptions/database_exception.dart';
+import 'package:cuidapet_api/application/exceptions/user_exists_exception.dart';
 import 'package:cuidapet_api/application/exceptions/user_notfound_exception.dart';
 import 'package:cuidapet_api/application/logger/i_logger.dart';
 import 'package:cuidapet_api/entities/user.dart';
@@ -49,6 +51,26 @@ void main() {
       final user = await userRepository.createUser(userInsert);
 
       expect(user, userExpected);
+    });
+
+    test('Should throw DatabaseExcpetion', () async {
+      database.mockQueryException();
+
+      final call = userRepository.createUser;
+
+      expect(() => call(User()), throwsA(isA<DatabaseException>()));
+    });
+
+    test('Should throw UserExistsException', () async {
+      final excetion = MockMysqlException();
+
+      when(() => excetion.message).thenReturn('usuario.email_UNIQUE');
+
+      database.mockQueryException(excetion);
+
+      final call = userRepository.createUser;
+
+      expect(() => call(User()), throwsA(isA<UserExistsException>()));
     });
   });
 
