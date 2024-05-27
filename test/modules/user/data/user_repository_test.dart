@@ -4,6 +4,7 @@ import 'package:cuidapet_api/application/exceptions/user_notfound_exception.dart
 import 'package:cuidapet_api/application/logger/i_logger.dart';
 import 'package:cuidapet_api/entities/user.dart';
 import 'package:cuidapet_api/modules/user/data/user_repository.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import '../../../core/fixture/fixture_reader.dart';
@@ -19,6 +20,38 @@ void main() {
     database = MockDatabaseConnection();
     log = MockLogger();
     userRepository = UserRepository(connection: database, log: log);
+  });
+
+  group('Group test create user', () {
+    test('Should create user with suucess', () async {
+      final userId = 1;
+      final mockResults = MockResults();
+
+      when(() => mockResults.insertId).thenReturn(userId);
+
+      database.mockQuery(mockResults);
+
+      final userInsert = User(
+        email: 'eduardo@gmail.com',
+        registerType: 'App',
+        imageAvatar: '',
+        password: '123123',
+      );
+
+      final userExpect = (
+        User(
+          id: userId,
+          email: 'eduardo@gmail.com',
+          registerType: 'App',
+          imageAvatar: '',
+          password: '',
+        ),
+      );
+
+      final user = await userRepository.createUser(userInsert);
+
+      expect(user, userExpect);
+    });
   });
 
   group('Group test findById', () {
@@ -54,19 +87,18 @@ void main() {
       expect(user, userExpected);
       database.verifyConnectionClose();
     });
-  });
+    test('Should return exception UserNotFoundException', () async {
+      final userId = 1;
 
-  test('Should return exception UserNotFoundException', () async {
-    final userId = 1;
+      final mockResults = MockResults();
 
-    final mockResults = MockResults();
+      database.mockQuery(mockResults, [userId]);
 
-    database.mockQuery(mockResults, [userId]);
+      final call = userRepository.findById;
 
-    final call = userRepository.findById;
-
-    expect(() => call(userId), throwsA(isA<UserNotfoundException>()));
-    await Future.delayed(Duration(seconds: 1));
-    database.verifyConnectionClose();
+      expect(() => call(userId), throwsA(isA<UserNotfoundException>()));
+      await Future.delayed(Duration(seconds: 1));
+      database.verifyConnectionClose();
+    });
   });
 }
